@@ -6,6 +6,13 @@
      <a class="btn btn-secondary" href="{% url 'post_edit' pk=post.pk %}">
         {% include './icons/pencil-fill.svg' %}
      </a>
+     <a class="btn btn-secondary" role="button" href="{% url 'add_comment_to_post' pk=post.pk %}">Add comment</a>
+     <form action="{% url 'post_delete' pk=post.pk %}" method="post" style="display:inline;">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-secondary" onclick="return confirm('Are you sure you want to delete this post?');">
+    {% include './icons/trash-fill.svg' %}
+  </button>
+</form>
 {% endif %}
         {% if post.published_date %}
             <time class="date">
@@ -15,4 +22,14 @@
         <h2>{{ post.title }}</h2>
         <p>{{ post.text|linebreaksbr }}</p>
     </article>
+    <hr>
+{% for comment in post.comments.all %}
+    <div class="comment">
+        <div class="date">{{ comment.created_date }}</div>
+        <strong>{{ comment.author }}</strong>
+        <p>{{ comment.text|linebreaks }}</p>
+    </div>
+{% empty %}
+    <p>No comments here yet :(</p>
+{% endfor %}
 {% endblock %}
